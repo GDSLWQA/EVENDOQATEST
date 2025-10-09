@@ -1,3 +1,5 @@
+# File: pages/login_page.py
+
 from pages.base_page import BasePage
 from playwright.sync_api import expect
 
@@ -20,6 +22,9 @@ class LoginPage(BasePage):
         
     def verify_login_successful(self):
         self.page.wait_for_url("**/profile**")
-        user_name_element = self.page.get_by_role("link", name="Test User")
-        expect(user_name_element).to_be_visible(timeout=10000)
-        print("Status: ✅ Login successful, user name is visible.")
+        
+       
+        save_button = self.page.get_by_role("button", name="Save Changes")
+        expect(save_button).to_be_visible(timeout=10000)
+        
+        print("Status: ✅ Login successful, profile page is loaded.")
