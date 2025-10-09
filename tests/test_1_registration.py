@@ -26,7 +26,7 @@ def run_test():
         
         with open(CREDENTIALS_FILE, "w") as f:
             json.dump(credentials, f)
-        print(f"Учетные данные сохранены в {CREDENTIALS_FILE}")
+        print(f"Setup: Credentials saved to {CREDENTIALS_FILE}")
         
         browser.close()
 

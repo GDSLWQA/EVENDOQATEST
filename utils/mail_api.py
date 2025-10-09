@@ -1,3 +1,5 @@
+# File: utils/mail_api.py
+
 import requests
 import re
 import time
@@ -19,7 +21,7 @@ class MailTmApi:
         self.password = "SuperSecurePassword123!"
         account_data = {"address": self.email, "password": self.password}
         requests.post(f"{self.base_url}/accounts", json=account_data)
-        print(f"Создан email: {self.email}")
+        print(f"MailTM API: Account created -> {self.email}")
         return account_data
 
     def get_token(self):
@@ -32,6 +34,7 @@ class MailTmApi:
     def wait_for_link(self, link_text_regex, timeout=120):
         deadline = time.time() + timeout
         headers = self.get_token()
+        print("MailTM API: Waiting for new email...")
         while time.time() < deadline:
             try:
                 resp = requests.get(f"{self.base_url}/messages", headers=headers)
@@ -43,10 +46,9 @@ class MailTmApi:
                     soup = BeautifulSoup(body_html, 'html.parser')
                     link_tag = soup.find('a', string=re.compile(link_text_regex, re.I))
                     if link_tag and link_tag.get('href'):
-                        print("✅ Найдена ссылка в письме.")
+                        print("MailTM API: ✅ Link found in email.")
                         return link_tag['href']
             except Exception as e:
-                print(f"Ошибка при проверке почты: {e}")
-            print("Письмо пока не найдено, ждём...")
+                print(f"MailTM API: Error checking mail -> {e}")
             time.sleep(10)
-        raise Exception("Не удалось дождаться письма с нужной ссылкой")
+        raise Exception("MailTM API: Did not receive email in time.")

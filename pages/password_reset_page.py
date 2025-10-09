@@ -9,22 +9,22 @@ class PasswordResetPage(BasePage):
         self.repassword_input = self.page.locator("#repassword")
         
     def open(self):
-        print("Открываем страницу сброса пароля...")
+        print("Action: Opening password reset page...")
         self.page.goto("/forgot-password")
 
     def submit_email(self, email: str):
-        print(f"Вводим email {email} для сброса пароля...")
+        print(f"Action: Submitting email for password reset -> {email}")
         self.email_input.fill(email)
         self.submit_button.click()
         
     def verify_request_submitted(self):
         self.page.wait_for_url("**/reset-confirm**")
-        print("✅ Запрос на сброс пароля отправлен.")
+        print("Status: ✅ Password reset request submitted.")
 
     def enter_new_password(self, password: str):
-        print("Вводим новый пароль...")
+        print("Action: Entering new password...")
         self.password_input.fill(password)
         self.repassword_input.fill(password)
         self.submit_button.click()
         self.page.wait_for_url("**/login**")
-        print("✅ Пароль успешно изменен.")
+        print("Status: ✅ Password successfully changed.")

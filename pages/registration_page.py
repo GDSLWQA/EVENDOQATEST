@@ -10,19 +10,19 @@ class RegistrationPage(BasePage):
         self.repassword_input = self.page.locator("#repassword")
         
     def open(self):
-        print("Открываем страницу регистрации...")
+        print("Action: Opening registration page...")
         self.page.goto("/registration")
 
     def submit_email(self, email: str):
-        print(f"Вводим email {email} для регистрации...")
+        print(f"Action: Submitting registration email -> {email}")
         self.email_input.fill(email)
         self.submit_button.click()
         
     def complete_registration(self, name: str, password: str):
-        print("Завершаем регистрацию: вводим имя и пароль...")
+        print("Action: Completing registration with name and password...")
         self.name_input.fill(name)
         self.password_input.fill(password)
         self.repassword_input.fill(password)
         self.submit_button.click()
         self.page.wait_for_url("**/login**")
-        print("✅ Регистрация завершена.")
+        print("Status: ✅ Registration form submitted.")
