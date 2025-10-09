@@ -6,7 +6,8 @@ tests_in_order = [
     "tests.test_1_registration",
     "tests.test_2_login",
     "tests.test_3_password_reset",
-    "tests.test_4_fill_profile", # <-- ДОБАВЬТЕ ЭТУ СТРОКУ
+    "tests.test_4_fill_profile", 
+    "tests.test_5_change_password_in_profile"
 ]
 
 for module_name in tests_in_order:
