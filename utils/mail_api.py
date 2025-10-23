@@ -31,24 +31,31 @@ class MailTmApi:
             self.headers = {"Authorization": f"Bearer {self.token}"}
         return self.headers
 
-    def wait_for_link(self, link_text_regex, timeout=120):
+    def wait_for_link(self, link_text_regex, subject_filter, timeout=120):
         deadline = time.time() + timeout
         headers = self.get_token()
-        print("MailTM API: Waiting for new email...")
+        print(f"MailTM API: Waiting for any new email...")
         while time.time() < deadline:
             try:
                 resp = requests.get(f"{self.base_url}/messages", headers=headers)
                 messages = resp.json()['hydra:member']
-                if messages:
-                    msg_id = messages[0]['id']
-                    msg_resp = requests.get(f"{self.base_url}/messages/{msg_id}", headers=headers)
-                    body_html = "".join(msg_resp.json().get('html', []))
-                    soup = BeautifulSoup(body_html, 'html.parser')
-                    link_tag = soup.find('a', string=re.compile(link_text_regex, re.I))
-                    if link_tag and link_tag.get('href'):
-                        print("MailTM API: ✅ Link found in email.")
-                        return link_tag['href']
+                for msg in messages:
+                    # --- DEBUGGING CHANGE ---
+                    # We print the subject of EVERY email we find.
+                    subject = msg.get("subject", "NO SUBJECT")
+                    print(f"DEBUG: Found email with subject: '{subject}'")
+                    
+                    # Now we check if it's the right one
+                    if subject_filter in subject:
+                        msg_id = msg['id']
+                        msg_resp = requests.get(f"{self.base_url}/messages/{msg_id}", headers=headers)
+                        body_html = "".join(msg_resp.json().get('html', []))
+                        soup = BeautifulSoup(body_html, 'html.parser')
+                        link_tag = soup.find('a', string=re.compile(link_text_regex, re.I))
+                        if link_tag and link_tag.get('href'):
+                            print("MailTM API: ✅ Correct email and link found.")
+                            return link_tag['href']
             except Exception as e:
                 print(f"MailTM API: Error checking mail -> {e}")
             time.sleep(10)
-        raise Exception("MailTM API: Did not receive email in time.")
+        raise Exception(f"MailTM API: Did not receive email with subject '{subject_filter}' in time.")
